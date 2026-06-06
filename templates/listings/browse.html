@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Listings - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h2>Available Food</h2>
+    <form id="filter-form" method="GET" action="{{ url_for('browse') }}" class="flex gap-4">
+        <select name="category" class="form-control" style="width: auto;">
+            <option value="">All Categories</option>
+            <option value="cooked_food" {% if request.args.get('category') == 'cooked_food' %}selected{% endif %}>Cooked Food</option>
+            <option value="raw_produce" {% if request.args.get('category') == 'raw_produce' %}selected{% endif %}>Raw Produce</option>
+            <option value="packaged" {% if request.args.get('category') == 'packaged' %}selected{% endif %}>Packaged</option>
+            <option value="bakery" {% if request.args.get('category') == 'bakery' %}selected{% endif %}>Bakery</option>
+            <option value="dairy" {% if request.args.get('category') == 'dairy' %}selected{% endif %}>Dairy</option>
+            <option value="beverages" {% if request.args.get('category') == 'beverages' %}selected{% endif %}>Beverages</option>
+            <option value="other" {% if request.args.get('category') == 'other' %}selected{% endif %}>Other</option>
+        </select>
+        <select name="urgency" class="form-control" style="width: auto;">
+            <option value="">All Urgencies</option>
+            <option value="critical" {% if request.args.get('urgency') == 'critical' %}selected{% endif %}>Critical (&lt;2h)</option>
+            <option value="urgent" {% if request.args.get('urgency') == 'urgent' %}selected{% endif %}>Urgent (&lt;6h)</option>
+            <option value="normal" {% if request.args.get('urgency') == 'normal' %}selected{% endif %}>Normal</option>
+        </select>
+        <input type="text" name="q" placeholder="Search keywords..." value="{{ request.args.get('q', '') }}" class="form-control" style="width: 200px;">
+        <input type="text" name="area" placeholder="Filter by Area..." value="{{ request.args.get('area', '') }}" class="form-control" style="width: 150px;">
+        <button type="submit" class="btn btn-outline">Filter</button>
+    </form>
+</div>
+
+{% if listings %}
+<div class="grid grid-cols-3">
+    {% for listing in listings %}
+        <div class="card flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="badge badge-info">{{ listing.category|replace('_', ' ')|title }}</span>
+                    <span class="badge urgency-{{ listing.urgency }}">{{ listing.urgency|title }}</span>
+                </div>
+                <h3>{{ listing.title }}</h3>
+                <p class="text-secondary mb-2">{{ listing.quantity_kg }} kg • {{ listing.area }}</p>
+                <p class="text-secondary" style="font-size: 0.875rem;">
+                    Ends: <span class="expiry-countdown" data-expiry="{{ listing.expiry_time.isoformat() + 'Z' }}">{{ listing.expiry_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                </p>
+                <p class="mt-2 text-secondary" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    {{ listing.description }}
+                </p>
+            </div>
+            <div class="mt-4">
+                <a href="{{ url_for('listing_detail', id=listing.id) }}" class="btn btn-outline w-full text-center">View Details</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card text-center py-16">
+    <h3 class="text-secondary">No active listings found</h3>
+    <p class="mt-2 text-secondary">Try adjusting your filters or check back later.</p>
+</div>
+{% endif %}
+{% endblock %}
