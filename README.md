@@ -43,6 +43,29 @@ This project was developed as the final project for Harvard's **CS50x**.
 
 ---
 
+## 📂 Project Structure
+
+```text
+FoodBridge/
+├── app.py                  # Main Flask application & DB models
+├── requirements.txt        # Python dependencies
+├── .env.example            # Environment variables template
+├── README.md               # Project documentation
+├── templates/              # HTML templates (Jinja2)
+│   ├── base.html           # Master layout template
+│   ├── index.html          # Landing page
+│   ├── auth/               # Login and registration views
+│   ├── listings/           # Food listing & detail views
+│   └── dashboard/          # Role-specific dashboards
+└── static/                 # Static assets
+    ├── css/
+    │   └── style.css       # Custom design system
+    └── js/
+        └── main.js         # Client-side interactions
+```
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
