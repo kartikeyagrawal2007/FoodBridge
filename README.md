@@ -18,7 +18,9 @@ By providing real-time listings, urgency tracking, and atomic claiming mechanism
 
 This project was developed as the final project for Harvard's **CS50x**.
 
-[**🎥 Watch the Demo Video Here**](#) *(CS50 Video Link Placeholder)*
+#### Video Demo: https://youtu.be/XnkwVpmIzhA
+
+[**🎥 Watch the Demo Video Here**](https://youtu.be/XnkwVpmIzhA)
 
 ---
 
