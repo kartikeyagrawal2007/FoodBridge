@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Login - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="flex justify-center py-8">
+    <div class="card" style="width: 100%; max-width: 400px;">
+        <h2 class="text-center mb-4">Welcome Back</h2>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control", placeholder="Email address") }}
+                {% for error in form.email.errors %}
+                    <span class="text-danger" style="font-size: 0.875rem;">{{ error }}</span>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control", placeholder="Password") }}
+                {% for error in form.password.errors %}
+                    <span class="text-danger" style="font-size: 0.875rem;">{{ error }}</span>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group flex items-center gap-2">
+                {{ form.remember() }}
+                {{ form.remember.label(class="form-label", style="margin-bottom:0;") }}
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-full mt-4">Login</button>
+        </form>
+        <div class="text-center mt-4">
+            <p class="text-secondary">Don't have an account? <a href="{{ url_for('register') }}">Sign up</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Register - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="flex justify-center py-8">
+    <div class="card" style="width: 100%; max-width: 500px;">
+        <h2 class="text-center mb-4">Create an Account</h2>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-group">
+                    {{ form.name.label(class="form-label") }}
+                    {{ form.name(class="form-control") }}
+                    {% for error in form.name.errors %}
+                        <span class="text-danger" style="font-size: 0.875rem;">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.role.label(class="form-label") }}
+                    {{ form.role(class="form-control") }}
+                    {% for error in form.role.errors %}
+                        <span class="text-danger" style="font-size: 0.875rem;">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control") }}
+                {% for error in form.email.errors %}
+                    <span class="text-danger" style="font-size: 0.875rem;">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-group">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control") }}
+                    {% for error in form.password.errors %}
+                        <span class="text-danger" style="font-size: 0.875rem;">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.confirm_password.label(class="form-label") }}
+                    {{ form.confirm_password(class="form-control") }}
+                    {% for error in form.confirm_password.errors %}
+                        <span class="text-danger" style="font-size: 0.875rem;">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-group">
+                    {{ form.phone.label(class="form-label") }}
+                    {{ form.phone(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.organization.label(class="form-label") }}
+                    {{ form.organization(class="form-control") }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full mt-4">Sign Up</button>
+        </form>
+        <div class="text-center mt-4">
+            <p class="text-secondary">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
