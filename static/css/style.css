@@ -129,32 +129,32 @@ a:hover {
 
 .btn-primary {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    color: white;
+    color: white !important;
     box-shadow: 0 4px 10px rgba(45, 106, 79, 0.2);
 }
 .btn-primary:hover {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(45, 106, 79, 0.3);
-    color: white;
+    color: white !important;
 }
 
 .btn-accent {
     background-color: var(--accent);
-    color: white;
+    color: white !important;
 }
 .btn-accent:hover {
     background-color: var(--accent-hover);
-    color: white;
+    color: white !important;
 }
 
 .btn-danger {
     background-color: var(--danger);
-    color: white;
+    color: white !important;
 }
 .btn-danger:hover {
     background-color: #DC2626;
-    color: white;
+    color: white !important;
 }
 
 .btn-outline {
