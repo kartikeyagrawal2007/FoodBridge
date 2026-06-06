@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Access Denied - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="flex justify-center py-16">
+    <div class="card text-center" style="max-width: 500px;">
+        <h1 class="text-danger" style="font-size: 4rem; margin-bottom: 0;">403</h1>
+        <h2 class="mb-4">Access Denied</h2>
+        <p class="text-secondary mb-6">You don't have permission to view this page. This area might be restricted to specific user roles.</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Return Home</a>
+    </div>
+</div>
+{% endblock %}

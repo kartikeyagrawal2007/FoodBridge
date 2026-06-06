@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="py-8">
+    <h1 class="mb-6">Platform Administration</h1>
+
+    <div class="grid grid-cols-3 gap-6 mb-8">
+        <div class="card stat-card">
+            <div class="stat-value">{{ user_count }}</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value">{{ listing_count }}</div>
+            <div class="stat-label">Total Listings</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value">{{ claim_count }}</div>
+            <div class="stat-label">Total Claims</div>
+        </div>
+    </div>
+
+    <div class="card mb-8">
+        <h2 class="mb-4">Users Directory</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td><span class="badge badge-{% if user.role == 'donor' %}info{% elif user.role == 'claimant' %}warning{% else %}success{% endif %}">{{ user.role|title }}</span></td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="badge badge-success">Active</span>
+                            {% else %}
+                                <span class="badge badge-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
