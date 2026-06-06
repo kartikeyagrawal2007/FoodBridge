@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{{ listing.title }} - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="py-8">
+    <div class="grid grid-cols-3 gap-8">
+        <div class="card" style="grid-column: span 2;">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h1 class="mb-2">{{ listing.title }}</h1>
+                    <div class="flex gap-2 items-center">
+                        <span class="badge badge-info">{{ listing.category|replace('_', ' ')|title }}</span>
+                        {% if listing.status == 'active' %}
+                            <span class="badge urgency-{{ listing.urgency }}">{{ listing.urgency|title }}</span>
+                        {% else %}
+                            <span class="badge badge-secondary" style="background: var(--border); color: var(--text-secondary);">{{ listing.status|title }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-secondary text-sm">Quantity</p>
+                    <p class="text-2xl font-bold" style="color: var(--primary);">{{ listing.quantity_kg }} kg</p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg mb-2">Description</h3>
+                <p class="text-secondary">{{ listing.description }}</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <h3 class="text-sm text-secondary uppercase mb-1">Donor</h3>
+                    <p><strong>{{ listing.donor.name }}</strong></p>
+                    {% if listing.donor.organization %}<p class="text-sm text-secondary">{{ listing.donor.organization }}</p>{% endif %}
+                </div>
+                <div>
+                    <h3 class="text-sm text-secondary uppercase mb-1">Location</h3>
+                    <p>{{ listing.address }}</p>
+                    <p class="text-sm text-secondary">{{ listing.area }}, {{ listing.city }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm text-secondary uppercase mb-1">Pickup Window</h3>
+                    <p>{{ listing.pickup_start }} - {{ listing.pickup_end }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm text-secondary uppercase mb-1">Expires</h3>
+                    <p class="expiry-countdown" data-expiry="{{ listing.expiry_time.isoformat() + 'Z' }}">{{ listing.expiry_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                </div>
+            </div>
+            
+            {% if current_user.is_authenticated and current_user.id == listing.donor_id %}
+                <div class="border-t pt-4 mt-6 flex gap-4">
+                    {% if listing.status == 'active' %}
+                        <a href="{{ url_for('edit_listing', id=listing.id) }}" class="btn btn-outline">Edit Listing</a>
+                        <form method="POST" action="{{ url_for('delete_listing', id=listing.id) }}" class="inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-danger confirm-action" data-confirm="Delete this listing forever?">Delete</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="card" style="align-self: start;">
+            <h3 class="mb-4">Action</h3>
+            
+            {% if listing.status == 'active' %}
+                {% if not current_user.is_authenticated %}
+                    <p class="mb-4 text-secondary">Log in as a claimant to claim this food.</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-primary w-full">Login</a>
+                {% elif current_user.role == 'claimant' %}
+                    <form method="POST" action="{{ url_for('claim_listing', id=listing.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <p class="mb-4 text-sm text-secondary">By claiming, you commit to picking up this food during the specified window.</p>
+                        <button type="submit" class="btn btn-accent w-full confirm-action" data-confirm="Are you sure you want to claim this listing?">Claim Food</button>
+                    </form>
+                {% elif current_user.role == 'donor' %}
+                    <p class="text-secondary text-sm">You are logged in as a donor. Only claimants can claim food.</p>
+                {% endif %}
+            
+            {% elif listing.status == 'claimed' %}
+                <div class="alert alert-info mb-4" style="min-width: 100%;">
+                    This listing has been claimed and is awaiting pickup confirmation.
+                </div>
+                
+                {% set claim = listing.claims|selectattr('status', 'equalto', 'pending')|first %}
+                
+                {% if current_user.is_authenticated and (current_user.id == listing.donor_id or (claim and current_user.id == claim.claimant_id)) %}
+                    <div class="border-t pt-4 mt-4">
+                        {% if current_user.id == listing.donor_id %}
+                            <form method="POST" action="{{ url_for('confirm_pickup', id=listing.id) }}" class="mb-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-success w-full confirm-action" style="background-color: var(--success); color: white;" data-confirm="Confirm that the claimant has picked up the food?">Confirm Pickup Complete</button>
+                            </form>
+                        {% endif %}
+                        <form method="POST" action="{{ url_for('cancel_claim', id=listing.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-outline w-full confirm-action" data-confirm="Cancel this claim and make the listing active again?">Cancel Claim</button>
+                        </form>
+                    </div>
+                {% endif %}
+            
+            {% elif listing.status == 'completed' %}
+                <div class="alert alert-success" style="min-width: 100%; background-color: var(--success);">
+                    Pickup completed! This food was successfully rescued.
+                </div>
+            {% elif listing.status == 'expired' %}
+                <div class="alert alert-danger" style="min-width: 100%;">
+                    This listing has expired.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
