@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Impact - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="py-8 text-center">
+    <h1 class="mb-4">Our Collective Impact</h1>
+    <p class="text-secondary text-lg mb-8 max-w-2xl mx-auto">Every meal rescued is a step towards a sustainable future. See how the FoodBridge community is making a difference.</p>
+
+    <div class="grid grid-cols-4 gap-6 mb-12">
+        <div class="card stat-card" style="background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2);">
+            <div class="stat-value count-up" data-target="{{ stats.kg_rescued or 0 }}" style="color: var(--success);">0</div>
+            <div class="stat-label">KG of Food Rescued</div>
+        </div>
+        <div class="card stat-card" style="background-color: rgba(244, 162, 97, 0.1); border-color: rgba(244, 162, 97, 0.2);">
+            <div class="stat-value count-up" data-target="{{ stats.meals_enabled or 0 }}" style="color: var(--accent);">0</div>
+            <div class="stat-label">Meals Provided</div>
+        </div>
+        <div class="card stat-card" style="background-color: rgba(45, 106, 79, 0.1); border-color: rgba(45, 106, 79, 0.2);">
+            <div class="stat-value count-up" data-target="{{ stats.co2_saved or 0 }}">0</div>
+            <div class="stat-label">KG CO₂ Prevented</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ stats.rescues_count or 0 }}">0</div>
+            <div class="stat-label">Successful Rescues</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-8 text-left">
+        <div class="card">
+            <h2 class="mb-4 flex items-center gap-2">🏆 Top Donors</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Donor Name</th>
+                            <th>Food Rescued</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donor in top_donors %}
+                        <tr>
+                            <td><strong>#{{ loop.index }}</strong></td>
+                            <td>{{ donor.name }} {% if donor.organization %}<span class="text-sm text-secondary">({{ donor.organization }})</span>{% endif %}</td>
+                            <td class="font-bold text-success">{{ donor.total_kg }} kg</td>
+                        </tr>
+                        {% endfor %}
+                        {% if not top_donors %}
+                        <tr>
+                            <td colspan="3" class="text-center text-secondary">No impact recorded yet.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 class="mb-4 flex items-center gap-2">🌟 Top Claimants</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Organization</th>
+                            <th>Food Rescued</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for claimant in top_claimants %}
+                        <tr>
+                            <td><strong>#{{ loop.index }}</strong></td>
+                            <td>{{ claimant.name }} {% if claimant.organization %}<span class="text-sm text-secondary">({{ claimant.organization }})</span>{% endif %}</td>
+                            <td class="font-bold text-success">{{ claimant.total_kg }} kg</td>
+                        </tr>
+                        {% endfor %}
+                        {% if not top_claimants %}
+                        <tr>
+                            <td colspan="3" class="text-center text-secondary">No impact recorded yet.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

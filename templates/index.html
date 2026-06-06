@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}FoodBridge - End Food Waste{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Bridge the gap between surplus and need.</h1>
+    <p>Join our mission to reduce food waste and support communities. Share surplus food or claim donations today.</p>
+    <div class="hero-buttons">
+        <a href="{{ url_for('browse') }}" class="btn btn-accent" style="font-size: 1.1rem; padding: 0.75rem 1.5rem;">Browse Available Food</a>
+        <a href="{{ url_for('register') }}" class="btn btn-outline" style="color: white; border-color: white; font-size: 1.1rem; padding: 0.75rem 1.5rem;">Join the Network</a>
+    </div>
+</section>
+
+<section class="mb-8">
+    <div class="grid grid-cols-3">
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ impact_stats.kg_rescued or 0 }}">0</div>
+            <div class="stat-label">KG of Food Rescued</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ impact_stats.meals_enabled or 0 }}">0</div>
+            <div class="stat-label">Meals Enabled</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ impact_stats.co2_saved or 0 }}">0</div>
+            <div class="stat-label">KG CO₂ Prevented</div>
+        </div>
+    </div>
+</section>
+
+<section class="py-8">
+    <h2 class="text-center mb-8">How It Works</h2>
+    <div class="grid grid-cols-3">
+        <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">1️⃣</div>
+            <h3>List Surplus</h3>
+            <p class="text-secondary">Restaurants and individuals list perfectly good food that would otherwise go to waste.</p>
+        </div>
+        <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">2️⃣</div>
+            <h3>Claim Food</h3>
+            <p class="text-secondary">NGOs, shelters, and individuals browse listings and claim what they can use.</p>
+        </div>
+        <div class="card text-center">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">3️⃣</div>
+            <h3>Pickup & Impact</h3>
+            <p class="text-secondary">Claimants pick up the food during the specified window, tracking positive impact.</p>
+        </div>
+    </div>
+</section>
+
+{% if recent_listings %}
+<section class="py-8">
+    <div class="flex justify-between items-center mb-4">
+        <h2>Recent Listings</h2>
+        <a href="{{ url_for('browse') }}">View all &rarr;</a>
+    </div>
+    <div class="grid grid-cols-3">
+        {% for listing in recent_listings %}
+            <div class="card flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="badge badge-info">{{ listing.category|replace('_', ' ')|title }}</span>
+                        <span class="badge urgency-{{ listing.urgency }}">
+                            {{ listing.urgency|title }}
+                        </span>
+                    </div>
+                    <h3>{{ listing.title }}</h3>
+                    <p class="text-secondary mb-2">{{ listing.quantity_kg }} kg • {{ listing.area }}</p>
+                    <p class="text-secondary" style="font-size: 0.875rem;">
+                        Ends: <span class="expiry-countdown" data-expiry="{{ listing.expiry_time.isoformat() + 'Z' }}">{{ listing.expiry_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </p>
+                </div>
+                <div class="mt-4">
+                    <a href="{{ url_for('listing_detail', id=listing.id) }}" class="btn btn-outline w-full text-center">View Details</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}
