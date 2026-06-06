@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Claimant Dashboard - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1>Claimant Dashboard</h1>
+        <a href="{{ url_for('browse') }}" class="btn btn-primary">Browse Food</a>
+    </div>
+
+    <div class="grid grid-cols-3 gap-6 mb-8">
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ impact.kg_rescued or 0 }}">0</div>
+            <div class="stat-label">KG Rescued</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ impact.meals_enabled or 0 }}">0</div>
+            <div class="stat-label">Meals Provided</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ impact.co2_saved or 0 }}">0</div>
+            <div class="stat-label">KG CO₂ Saved</div>
+        </div>
+    </div>
+
+    <div class="card mb-8">
+        <h2 class="mb-4">Active Claims (Action Required)</h2>
+        {% set active_claims = claims|selectattr('status', 'equalto', 'pending')|list %}
+        {% if active_claims %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Listing</th>
+                        <th>Donor</th>
+                        <th>Pickup Window</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for claim in active_claims %}
+                    <tr>
+                        <td><strong>{{ claim.listing.title }}</strong></td>
+                        <td>{{ claim.listing.donor.name }}</td>
+                        <td>{{ claim.listing.pickup_start }} - {{ claim.listing.pickup_end }}</td>
+                        <td>{{ claim.listing.address }}, {{ claim.listing.area }}</td>
+                        <td>
+                            <a href="{{ url_for('listing_detail', id=claim.listing.id) }}" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">View Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="text-secondary">You have no active claims.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2 class="mb-4">Claim History</h2>
+        {% set past_claims = claims|selectattr('status', 'in', ['confirmed', 'cancelled'])|list %}
+        {% if past_claims %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Listing</th>
+                        <th>Date</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for claim in past_claims %}
+                    <tr>
+                        <td><a href="{{ url_for('listing_detail', id=claim.listing.id) }}">{{ claim.listing.title }}</a></td>
+                        <td>{{ claim.claimed_at.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ claim.listing.quantity_kg }} kg</td>
+                        <td>
+                            {% if claim.status == 'confirmed' %}
+                                <span class="badge badge-success">Completed</span>
+                            {% else %}
+                                <span class="badge badge-danger">Cancelled</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="text-secondary">No past claims found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

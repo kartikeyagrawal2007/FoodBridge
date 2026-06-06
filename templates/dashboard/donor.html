@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Donor Dashboard - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1>Donor Dashboard</h1>
+        <a href="{{ url_for('create_listing') }}" class="btn btn-accent">+ New Listing</a>
+    </div>
+
+    <div class="grid grid-cols-3 gap-6 mb-8">
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ impact.kg_rescued or 0 }}">0</div>
+            <div class="stat-label">KG Rescued</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ impact.meals_enabled or 0 }}">0</div>
+            <div class="stat-label">Meals Provided</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value count-up" data-target="{{ impact.co2_saved or 0 }}">0</div>
+            <div class="stat-label">KG CO₂ Saved</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="mb-4">Your Listings</h2>
+        {% if listings %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Quantity</th>
+                        <th>Expires</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for listing in listings %}
+                    <tr {% if listing.status == 'claimed' %}style="background-color: rgba(244, 162, 97, 0.1);"{% endif %}>
+                        <td><strong>{{ listing.title }}</strong></td>
+                        <td>{{ listing.category|replace('_', ' ')|title }}</td>
+                        <td>
+                            {% if listing.status == 'active' %}
+                                <span class="badge badge-info">Active</span>
+                            {% elif listing.status == 'claimed' %}
+                                <span class="badge badge-warning">Claimed (Awaiting Pickup)</span>
+                            {% elif listing.status == 'completed' %}
+                                <span class="badge badge-success">Completed</span>
+                            {% else %}
+                                <span class="badge badge-secondary" style="background: var(--border);">{{ listing.status|title }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ listing.quantity_kg }} kg</td>
+                        <td>{{ listing.expiry_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <a href="{{ url_for('listing_detail', id=listing.id) }}" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="text-secondary">You haven't created any listings yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
